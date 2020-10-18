@@ -1,6 +1,7 @@
 package sword.rest.spring.example;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -23,6 +24,7 @@ import javax.servlet.http.HttpServletRequest;
 public final class WordController {
 
     private static final String WORD_COLLECTION_PATH = "/words";
+    private static final String WORD_PATH = "/word/{id}";
     private static final String COLUMN_NAME = "text";
 
     private final Map<String, String> data = new HashMap<>();
@@ -34,7 +36,7 @@ public final class WordController {
     }
 
     @GetMapping("/word/{id}")
-    public ResponseEntity word(@PathVariable(value = "id") String id) {
+    public ResponseEntity word(@PathVariable String id) {
         if (data.containsKey(id)) {
             final Map<String, String> wordDictionary = new HashMap<>();
             wordDictionary.put(COLUMN_NAME, data.get(id));
@@ -71,5 +73,15 @@ public final class WordController {
         }
 
         return ResponseEntity.status(500).build();
+    }
+
+    @DeleteMapping(WORD_PATH)
+    public ResponseEntity deleteWord(@PathVariable String id) {
+        if (data.remove(id) != null) {
+            return ResponseEntity.noContent().build();
+        }
+        else {
+            return ResponseEntity.badRequest().build();
+        }
     }
 }
