@@ -5,7 +5,9 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.net.URI;
@@ -35,7 +37,7 @@ public final class WordController {
         return data;
     }
 
-    @GetMapping("/word/{id}")
+    @GetMapping(WORD_PATH)
     public ResponseEntity word(@PathVariable String id) {
         if (data.containsKey(id)) {
             final Map<String, String> wordDictionary = new HashMap<>();
@@ -82,6 +84,24 @@ public final class WordController {
         }
         else {
             return ResponseEntity.badRequest().build();
+        }
+    }
+
+    @PutMapping(WORD_PATH)
+    public ResponseEntity replaceWord(@PathVariable String id, @RequestBody String text) {
+        final String currentText = data.get(id);
+        if (currentText == null) {
+            return ResponseEntity.badRequest().body("Word with id " + id + " does not exists");
+        }
+        else if (!text.equals(currentText) && data.containsValue(text)) {
+            return ResponseEntity.badRequest().body("Word '" + text + "' already exists");
+        }
+        else {
+            data.put(id, text);
+
+            final Map<String, String> wordDictionary = new HashMap<>();
+            wordDictionary.put(COLUMN_NAME, text);
+            return ResponseEntity.ok(wordDictionary);
         }
     }
 }
