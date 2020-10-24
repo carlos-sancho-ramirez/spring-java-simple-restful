@@ -12,7 +12,9 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 
 /**
  * Basic unit tests for the WordController.
@@ -42,5 +44,16 @@ final class WordControllerMockMvcTest {
                 .andReturn().getResponse();
         assertThat(response.getStatus()).isEqualTo(HttpStatus.OK.value());
         assertThat(response.getContentAsString()).isEqualTo("{}");
+    }
+
+    @Test
+    void insertWord() throws Exception {
+        final MockHttpServletResponse response = mvc
+                .perform(post(WordController.WORD_COLLECTION_PATH).accept(MediaType.APPLICATION_JSON).content("myWord"))
+                .andReturn().getResponse();
+        assertThat(response.getStatus()).isEqualTo(HttpStatus.CREATED.value());
+        final String location = response.getHeader("Location");
+        assertNotNull(location);
+        assertThat(response.getContentAsString()).isEqualTo("{\"" + WordController.COLUMN_NAME + "\":\"myWord\"}");
     }
 }
