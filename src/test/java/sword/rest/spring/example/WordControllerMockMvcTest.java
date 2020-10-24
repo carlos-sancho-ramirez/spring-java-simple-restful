@@ -29,12 +29,12 @@ final class WordControllerMockMvcTest {
     private MockMvc mvc;
 
     @InjectMocks
-    private WordController superHeroController;
+    private WordController wordController;
 
     @BeforeEach
     public void setup() {
         mvc = MockMvcBuilders
-                .standaloneSetup(superHeroController)
+                .standaloneSetup(wordController)
                 .build();
     }
 
@@ -49,7 +49,7 @@ final class WordControllerMockMvcTest {
 
     private MockHttpServletResponse insertWord(String word) throws Exception {
         return mvc
-                .perform(post(WordController.WORD_COLLECTION_PATH).accept(MediaType.APPLICATION_JSON).content("myWord"))
+                .perform(post(WordController.WORD_COLLECTION_PATH).accept(MediaType.APPLICATION_JSON).content(word))
                 .andReturn().getResponse();
     }
 
