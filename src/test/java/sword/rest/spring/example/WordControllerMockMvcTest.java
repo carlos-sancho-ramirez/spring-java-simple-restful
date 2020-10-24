@@ -15,6 +15,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static sword.rest.spring.example.WordController.WORD_PATH;
 
 /**
  * Basic unit tests for the WordController.
@@ -46,14 +47,37 @@ final class WordControllerMockMvcTest {
         assertThat(response.getContentAsString()).isEqualTo("{}");
     }
 
-    @Test
-    void insertWord() throws Exception {
-        final MockHttpServletResponse response = mvc
+    private MockHttpServletResponse insertWord(String word) throws Exception {
+        return mvc
                 .perform(post(WordController.WORD_COLLECTION_PATH).accept(MediaType.APPLICATION_JSON).content("myWord"))
                 .andReturn().getResponse();
+    }
+
+    private MockHttpServletResponse getWord(String id) throws Exception {
+        final String path = WORD_PATH.replace("{id}", id);
+        return mvc
+                .perform(get(path).accept(MediaType.APPLICATION_JSON))
+                .andReturn().getResponse();
+    }
+
+    private String extractWordId(String location) {
+        return location.substring(location.lastIndexOf('/') + 1);
+    }
+
+    @Test
+    void insertWord() throws Exception {
+        final MockHttpServletResponse response = insertWord("myWord");
         assertThat(response.getStatus()).isEqualTo(HttpStatus.CREATED.value());
         final String location = response.getHeader("Location");
         assertNotNull(location);
+        assertThat(response.getContentAsString()).isEqualTo("{\"" + WordController.COLUMN_NAME + "\":\"myWord\"}");
+    }
+
+    @Test
+    void getInsertedWord() throws Exception {
+        final String location = extractWordId(insertWord("myWord").getHeader("Location"));
+        final MockHttpServletResponse response = getWord(location);
+        assertThat(response.getStatus()).isEqualTo(HttpStatus.OK.value());
         assertThat(response.getContentAsString()).isEqualTo("{\"" + WordController.COLUMN_NAME + "\":\"myWord\"}");
     }
 }
