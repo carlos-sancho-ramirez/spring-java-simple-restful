@@ -14,10 +14,17 @@ group 'sword.rest.spring.example'
 version '1.0-SNAPSHOT'
 sourceCompatibility = '11'
 
+test {
+    useJUnitPlatform()
+}
+
 repositories {
     mavenCentral()
 }
 
 dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-web'
+    testImplementation('org.springframework.boot:spring-boot-starter-test') {
+        exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'
+    }
 }

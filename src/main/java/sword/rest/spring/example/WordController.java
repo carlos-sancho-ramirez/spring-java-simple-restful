@@ -25,7 +25,7 @@ import javax.servlet.http.HttpServletRequest;
 @RestController
 public final class WordController {
 
-    private static final String WORD_COLLECTION_PATH = "/words";
+    public static final String WORD_COLLECTION_PATH = "/words";
     private static final String WORD_PATH = "/word/{id}";
     private static final String COLUMN_NAME = "text";
 
