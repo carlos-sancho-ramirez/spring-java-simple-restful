@@ -22,6 +22,7 @@ public final class WordController {
 
     static final String WORD_COLLECTION_PATH = "/words";
     static final String WORD_PATH = "/word/{id}";
+    static final String WORD_PATH_WILDCARD = "/word/*";
     static final String COLUMN_NAME = "text";
 
     private final WordRepository wordRepository;
